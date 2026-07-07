@@ -1,0 +1,14 @@
+# Bibliotecas instaladas pelo Node.js (não devem ser enviadas)
+node_modules/
+
+# Arquivo secreto contendo as Chaves de API (Segurança máxima!)
+.env
+
+# Arquivos temporários de sistema (Mac e Windows)
+.DS_Store
+thumbs.db
+
+# Logs de erro e debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

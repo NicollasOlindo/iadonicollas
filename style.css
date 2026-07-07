@@ -1,0 +1,190 @@
+/* ============================================================
+   INTERFACE NEURAL N.E.O.N. - CORE CSS 1.1
+   ============================================================ */
+
+:root {
+    --bg-deep: #050508;
+    --panel-bg: rgba(13, 17, 23, 0.95);
+    --neon-accent: #00f2ff; /* Cyan Neon */
+    --neon-glow: rgba(0, 242, 255, 0.4);
+    --user-msg: #1a1a2e;
+    --ia-msg: #11141c;
+    --text-primary: #e6edf3;
+    --border-glow: #30363d;
+    --speed-fast: 0.3s;
+}
+
+/* 1. RESET E FUNDO GLOBAL */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg-deep);
+    background-image: 
+        radial-gradient(circle at top right, rgba(0, 242, 255, 0.05), transparent),
+        radial-gradient(circle at bottom left, rgba(0, 119, 255, 0.05), transparent);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 2. CONTAINER DO CHAT (THE RIG) */
+.chat-container {
+    width: 90%;
+    max-width: 500px;
+    height: 85vh;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-glow);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+/* 3. CABEÇALHO COM SELETOR DE NÚCLEO */
+.chat-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-glow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(15, 17, 26, 0.8);
+    border-radius: 20px 20px 0 0;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand h1 {
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    color: var(--neon-accent);
+    text-shadow: 0 0 10px var(--neon-glow);
+}
+
+.engine-selector select {
+    background: #000;
+    color: var(--neon-accent);
+    border: 1px solid var(--neon-glow);
+    padding: 4px 8px;
+    font-size: 11px;
+    font-family: 'Courier New', Courier, monospace;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* 4. CAIXA DE CONVERSA (CAMPO DE BATALHA) */
+.chat-box {
+    flex-grow: 1;
+    padding: 25px 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Scrollbar Futurista */
+.chat-box::-webkit-scrollbar { width: 4px; }
+.chat-box::-webkit-scrollbar-track { background: transparent; }
+.chat-box::-webkit-scrollbar-thumb { 
+    background: var(--neon-glow); 
+    border-radius: 10px; 
+}
+
+/* 5. MENSAGENS E ANIMAÇÕES */
+.mensagem {
+    padding: 14px 18px;
+    border-radius: 14px;
+    max-width: 85%;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-usuario {
+    background-color: var(--user-msg);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    color: var(--neon-accent);
+    align-self: flex-end;
+    border-bottom-right-radius: 0px;
+}
+
+.msg-ia {
+    background-color: var(--ia-msg);
+    border: 1px solid var(--border-glow);
+    align-self: flex-start;
+    border-bottom-left-radius: 0px;
+}
+
+/* 6. ENTRADA DE COMANDOS (INPUT) */
+.chat-input {
+    padding: 20px;
+    border-top: 1px solid var(--border-glow);
+    display: flex;
+    gap: 12px;
+}
+
+#campoTexto {
+    flex-grow: 1;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-glow);
+    padding: 12px 18px;
+    border-radius: 10px;
+    color: #fff;
+    outline: none;
+    transition: var(--speed-fast);
+}
+
+#campoTexto:focus {
+    border-color: var(--neon-accent);
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.1);
+}
+
+#btnEnviar {
+    background: linear-gradient(135deg, #0077ff, #00f2ff);
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 0 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+#btnEnviar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--neon-glow);
+}
+
+/* Estilos de Pulso (Digitando...) */
+.pulso {
+    animation: pulso 1.4s infinite;
+    display: inline-block;
+    margin-right: 2px;
+}
+
+@keyframes pulso {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; color: var(--neon-accent); }
+    100% { opacity: 0.3; }
+}

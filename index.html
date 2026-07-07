@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface Neural | Agente N.E.O.N.</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="chat-container">
+        <!-- Cabeçalho de Comando -->
+        <header class="chat-header">
+            <div class="brand">
+                <span class="neon-icon">💠</span>
+                <h1>SISTEMA N.E.O.N.</h1>
+            </div>
+
+            <!-- Seleção de Núcleo (Versão da IA) -->
+            <div class="engine-selector">
+                <label for="seletor-versao">NÚCLEO:</label>
+                <select id="seletor-versao">
+                    <option value="gemini-2.5-flash-lite">NUC 2.5 Lite (Econômico)</option>
+                    <option value="gemini-2.5-flash" selected>NUC 2.5 (Estável/Grátis)</option>
+                    <option value="gemini-3-flash-preview">NUC 3.0 (Avançado)</option>
+                    <option value="gemini-3.5-flash">NUC 3.5 (Futurista)</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Área de Conversação -->
+        <section id="caixa-chat" class="chat-box">
+            <div class="mensagem msg-ia">
+                Sistemas operacionais ativados. Saudações, Operador. 
+                Selecione o núcleo desejado e envie seu comando.
+            </div>
+        </section>
+
+        <!-- Painel de Input Eletrostático -->
+        <footer class="chat-input" style="gap: 8px;">
+            <!-- DESAFIO HACKER: BOTÃO DE DELETAR DB -->
+            <button id="btnLimpar" title="Destruir Banco de Dados" style="background: #bf1832; color: white; padding: 0 15px; border: 1px solid #ff4444; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: monospace;">☣️ FORMAT</button>
+            
+            <input 
+                type="text" 
+                id="campoTexto" 
+                placeholder="Insira comando de rede Neural..." 
+                autocomplete="off"
+            >
+            <button id="btnEnviar">ENVIAR</button>
+        </footer>
+    </main>
+
+    <!-- Link para a lógica de comunicação -->
+    <script src="index.js"></script>
+
+</body>
+</html>
