@@ -2,7 +2,6 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S.A.N. | Interface Neural</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -10,7 +9,10 @@
 <body>
     <main class="chat-container">
         <header class="chat-header">
-            <h1>S.A.N. - IA</h1>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <h1>S.A.N.</h1>
+                <div id="status-luz" title="Status do Servidor" style="width: 12px; height: 12px; border-radius: 50%; background: gray;"></div>
+            </div>
             <button id="btnLimpar">☣️ FORMAT</button>
         </header>
         <section id="caixa-chat" class="chat-box"></section>

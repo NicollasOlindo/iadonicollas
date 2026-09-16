@@ -6,11 +6,7 @@ const btnLimpar = document.getElementById("btnLimpar");
 function addMsg(txt, tipo, isMarkdown = false) {
     const div = document.createElement("div");
     div.className = `mensagem ${tipo === 'ia' ? 'msg-ia' : 'msg-user'}`;
-    if (isMarkdown) {
-        div.innerHTML = marked.parse(txt);
-    } else {
-        div.innerText = txt;
-    }
+    div.innerHTML = isMarkdown ? marked.parse(txt) : txt;
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -18,14 +14,8 @@ function addMsg(txt, tipo, isMarkdown = false) {
 async function enviar() {
     const msg = campoTexto.value;
     if (!msg) return;
-
     addMsg(msg, "user");
     campoTexto.value = "";
-    
-    const loading = document.createElement("div");
-    loading.className = "mensagem spinner";
-    loading.innerText = "S.A.N. processando...";
-    chatBox.appendChild(loading);
     
     try {
         const res = await fetch("https://t1-p1-a5-o-despertar-da-ia.onrender.com/api/chat", {
@@ -34,13 +24,22 @@ async function enviar() {
             body: JSON.stringify({ pergunta: msg })
         });
         const data = await res.json();
-        loading.remove();
         addMsg(data.resposta || data.erro, "ia", true);
-    } catch (e) {
-        loading.innerText = "Erro na conexão neural.";
-    }
+    } catch (e) { addMsg("Erro de conexão.", "ia"); }
+}
+
+// Monitor de Saúde
+async function checarSaude() {
+    const luz = document.getElementById("status-luz");
+    try {
+        const res = await fetch("https://t1-p1-a5-o-despertar-da-ia.onrender.com/api/health");
+        luz.style.background = res.ok ? "#00ff9d" : "#ff4d4d";
+    } catch (e) { luz.style.background = "#ff4d4d"; }
 }
 
 btnEnviar.addEventListener("click", enviar);
 campoTexto.addEventListener("keypress", (e) => e.key === "Enter" && enviar());
 btnLimpar.addEventListener("click", () => chatBox.innerHTML = "");
+
+checarSaude();
+setInterval(checarSaude, 30000);
