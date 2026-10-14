@@ -2,6 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="api-base-url" content="">
     <title>S.A.N. | Interface Neural</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -18,31 +19,32 @@
             </div>
             <div class="header-actions">
                 <span class="connection-status"><span id="status-luz" aria-hidden="true"></span> Servidor</span>
+                <span class="online-status"><span aria-hidden="true">●</span> <span id="usuariosOnline">0 online</span></span>
                 <button id="btnLimpar" type="button">Limpar conversa</button>
             </div>
         </header>
         <section class="workspace-panel" aria-label="Configurações de conversa">
             <div class="workspace-copy">
-                <span class="eyebrow">Fonte de contexto</span>
-                <span class="workspace-title">Conversa com documento</span>
+                <span class="eyebrow">Sala pública em tempo real</span>
+                <span class="workspace-title">Converse com todos e chame <strong>@gemini</strong> ou <strong>@bot</strong></span>
             </div>
             <label class="switch-control" for="modoDocumento">
                 <input type="checkbox" id="modoDocumento">
                 <span class="switch-track" aria-hidden="true"><span></span></span>
                 Usar documento
             </label>
+            <div class="access-fields">
+                <input type="text" id="usuario" placeholder="Usuário" autocomplete="username" aria-label="Usuário">
+                <input type="password" id="senha" placeholder="Senha" autocomplete="current-password" aria-label="Senha">
+                <button id="btnLogin" type="button">Entrar</button>
+                <span id="authStatus" role="status">Entre para acessar a sala</span>
+            </div>
             <div class="document-options" id="documentOptions" hidden>
                 <label class="file-picker" for="docUpload">
                     <span class="file-picker__icon" aria-hidden="true">+</span>
                     <span><strong>Selecionar PDF ou TXT</strong><small id="arquivoSelecionado">Nenhum arquivo selecionado</small></span>
                 </label>
                 <input type="file" id="docUpload" accept=".pdf,.txt,application/pdf,text/plain">
-                <div class="access-fields">
-                    <input type="text" id="usuario" placeholder="Usuário" autocomplete="username" aria-label="Usuário">
-                    <input type="password" id="senha" placeholder="Senha" autocomplete="current-password" aria-label="Senha">
-                    <button id="btnLogin" type="button">Entrar</button>
-                    <span id="authStatus" role="status">Entre para consultar documentos</span>
-                </div>
             </div>
         </section>
         <section id="caixa-chat" class="chat-box" aria-live="polite">
@@ -50,7 +52,7 @@
                 <span class="empty-state__mark">S</span>
                 <div>
                     <strong>Como posso ajudar?</strong>
-                    <p>Envie uma mensagem ou ative o documento para fazer perguntas sobre um arquivo.</p>
+                    <p>Entre para participar da sala. Suas mensagens chegam para todos em tempo real; mencione @gemini para chamar o moderador.</p>
                 </div>
             </div>
         </section>
@@ -62,6 +64,7 @@
             <button id="btnEnviar" type="button">Enviar <span aria-hidden="true">↑</span></button>
         </footer>
     </main>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
     <script src="index.js"></script>
 </body>
 </html>

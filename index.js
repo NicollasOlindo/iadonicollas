@@ -9,7 +9,9 @@ const documentOptions = document.getElementById('documentOptions');
 const docUpload = document.getElementById('docUpload');
 const arquivoSelecionado = document.getElementById('arquivoSelecionado');
 const tokenKey = 'san-jwt';
-const apiBase = ['5500', '5501', '5502'].includes(window.location.port) ? 'http://localhost:3000' : '';
+const apiBase = document.querySelector('meta[name="api-base-url"]')?.content.trim()
+    || (['5500', '5501', '5502'].includes(window.location.port) ? 'http://localhost:3000' : '');
+let socket = null;
 
 async function respostaJson(res) {
     const corpo = await res.text();
@@ -20,15 +22,15 @@ async function respostaJson(res) {
     }
 }
 
-function addMsg(txt, tipo, isMarkdown = false) {
+function addMsg(txt, tipo, isMarkdown = false, nome = null) {
     document.getElementById('emptyState')?.remove();
     const div = document.createElement('div');
-    div.className = `mensagem ${tipo === 'ia' ? 'msg-ia' : 'msg-user'}`;
+    div.className = `mensagem ${tipo === 'user' ? 'msg-user' : 'msg-ia'}`;
     const meta = document.createElement('div');
     const body = document.createElement('div');
     meta.className = 'mensagem__meta';
     body.className = 'mensagem__body';
-    meta.textContent = tipo === 'ia' ? 'S.A.N.' : 'Você';
+    meta.textContent = nome || (tipo === 'ia' ? 'S.A.N.' : tipo === 'moderador' ? '🤖 Moderador Gemini' : 'Você');
     if (isMarkdown && window.marked) body.innerHTML = window.marked.parse(txt || '');
     else body.textContent = txt || '';
     div.append(meta, body);
@@ -60,12 +62,46 @@ function atualizarModoDocumento() {
 
 function atualizarAuth() {
     const autenticado = Boolean(sessionStorage.getItem(tokenKey));
-    statusAuth.textContent = autenticado ? 'Autenticado para documentos' : 'Entre para consultar documentos';
+    statusAuth.textContent = autenticado ? 'Conectando à sala…' : 'Entre para acessar a sala';
     btnLogin.textContent = autenticado ? 'SAIR' : 'ENTRAR';
+}
+
+function atualizarConexaoSala(conectado, usuario = '') {
+    if (conectado) statusAuth.textContent = `Na sala como ${usuario}`;
+    else if (sessionStorage.getItem(tokenKey)) statusAuth.textContent = 'Reconectando à sala…';
+    else statusAuth.textContent = 'Entre para acessar a sala';
+}
+
+function conectarSala() {
+    const token = sessionStorage.getItem(tokenKey);
+    if (!token || !window.io) return;
+    socket?.disconnect();
+    socket = window.io(apiBase || window.location.origin, { auth: { token } });
+    socket.on('connect', () => atualizarConexaoSala(true));
+    socket.on('sessaoAtiva', ({ usuario }) => atualizarConexaoSala(true, usuario));
+    socket.on('usuariosOnline', (quantidade) => {
+        document.getElementById('usuariosOnline').textContent = `${quantidade} ${quantidade === 1 ? 'usuário' : 'usuários'} online`;
+    });
+    socket.on('mensagemRecebida', (mensagem) => {
+        const tipo = mensagem.tipo === 'moderador' ? 'moderador' : 'user';
+        addMsg(mensagem.texto, tipo, false, mensagem.usuario);
+    });
+    socket.on('erroChat', ({ erro }) => addMsg(erro, 'ia'));
+    socket.on('connect_error', (error) => {
+        atualizarConexaoSala(false);
+        if (/Token JWT inválido|expirado/i.test(error.message)) {
+            socket.disconnect();
+            sessionStorage.removeItem(tokenKey);
+            atualizarAuth();
+        }
+    });
+    socket.on('disconnect', () => atualizarConexaoSala(false));
 }
 
 async function autenticar() {
     if (sessionStorage.getItem(tokenKey)) {
+        socket?.disconnect();
+        socket = null;
         sessionStorage.removeItem(tokenKey);
         atualizarAuth();
         return;
@@ -84,7 +120,7 @@ async function autenticar() {
         sessionStorage.setItem(tokenKey, data.token);
         document.getElementById('senha').value = '';
         atualizarAuth();
-        addMsg('Acesso a documentos autenticado.', 'ia');
+        conectarSala();
     } catch (error) {
         addMsg(error.message, 'ia');
     }
@@ -100,6 +136,28 @@ async function enviar() {
     }
     if (modoDocumento.checked && !sessionStorage.getItem(tokenKey)) {
         addMsg('Entre com sua conta antes de conversar com documentos.', 'ia');
+        return;
+    }
+
+    if (!modoDocumento.checked) {
+        if (!sessionStorage.getItem(tokenKey)) {
+            addMsg('Entre com sua conta para participar da sala pública.', 'ia');
+            return;
+        }
+        if (!socket?.connected) {
+            addMsg('A sala está reconectando. Tente enviar novamente em instantes.', 'ia');
+            return;
+        }
+        campoTexto.value = '';
+        btnEnviar.disabled = true;
+        socket.timeout(5000).emit('novaMensagem', { texto: pergunta }, (erro, resultado) => {
+            btnEnviar.disabled = false;
+            if (erro) {
+                addMsg('O servidor demorou para confirmar. Verifique a conexão e tente novamente.', 'ia');
+                return;
+            }
+            if (!resultado?.ok) addMsg(resultado?.erro || 'Não foi possível enviar a mensagem.', 'ia');
+        });
         return;
     }
 
@@ -167,5 +225,6 @@ docUpload.addEventListener('change', () => {
 
 atualizarAuth();
 atualizarModoDocumento();
+if (sessionStorage.getItem(tokenKey)) conectarSala();
 checarSaude();
 setInterval(checarSaude, 30000);
